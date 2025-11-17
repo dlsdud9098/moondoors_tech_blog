@@ -17,10 +17,10 @@ Set up PostgreSQL database connection using SQLAlchemy 2.0 with async support (a
 - [x] **MARK**: Update progress
 
 ### Step 2: Test Async Engine Creation
-- [ ] **RED**: Write test for SQLAlchemy async engine creation
-- [ ] **GREEN**: Create async engine with connection pool
-- [ ] **REFACTOR**: Add proper pool configuration (size=10, max_overflow=20)
-- [ ] **MARK**: Update progress
+- [x] **RED**: Write test for SQLAlchemy async engine creation
+- [x] **GREEN**: Create async engine with connection pool
+- [x] **REFACTOR**: Add proper pool configuration (size=10, max_overflow=20)
+- [x] **MARK**: Update progress
 
 ### Step 3: Test Database Session Management
 - [ ] **RED**: Write test for async session creation

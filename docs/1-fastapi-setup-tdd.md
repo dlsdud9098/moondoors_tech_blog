@@ -23,8 +23,8 @@ Initialize FastAPI project with testing infrastructure following TDD methodology
 - [x] Step 8: Add environment validation (RED: test missing env raises error)
 
 ### Phase 4: Testing Infrastructure
-- [ ] Step 9: Setup pytest fixtures and conftest (RED: test client fixture works)
-- [ ] Step 10: Add async test support (RED: test async endpoint)
+- [x] Step 9: Setup pytest fixtures and conftest (RED: test client fixture works)
+- [x] Step 10: Add async test support (RED: test async endpoint)
 - [ ] Step 11: Configure test coverage (RED: test coverage > 80%)
 
 ### Phase 5: Code Quality Tools

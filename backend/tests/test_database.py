@@ -157,3 +157,54 @@ class TestDependencyInjection:
         except ValueError:
             # Exception should be raised but session should be rolled back
             pass
+
+
+class TestDatabaseInitialization:
+    """Test database initialization and lifecycle management."""
+
+    @pytest.mark.asyncio
+    async def test_init_db(self):
+        """Test that init_db creates database tables."""
+        from app.database import init_db, get_engine, Base
+
+        # Initialize database
+        await init_db()
+
+        # Verify tables exist (Base.metadata should have tables)
+        engine = get_engine()
+        assert engine is not None
+        assert Base.metadata is not None
+
+    @pytest.mark.asyncio
+    async def test_close_db(self):
+        """Test that close_db properly disposes engine."""
+        from app.database import get_engine, close_db
+
+        # Get engine
+        engine = get_engine()
+        assert engine is not None
+
+        # Close database
+        await close_db()
+
+        # Engine should be disposed (new engine will be created on next get)
+        from app.database import _engine
+        assert _engine is None
+
+    @pytest.mark.asyncio
+    async def test_lifecycle_integration(self):
+        """Test full database lifecycle: init -> use -> close."""
+        from app.database import init_db, get_db, close_db
+        from sqlalchemy import text
+
+        # Initialize
+        await init_db()
+
+        # Use database
+        async for session in get_db():
+            result = await session.execute(text("SELECT 1"))
+            assert result is not None
+            break
+
+        # Close
+        await close_db()

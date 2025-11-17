@@ -41,10 +41,10 @@ Set up PostgreSQL database connection using SQLAlchemy 2.0 with async support (a
 - [x] **MARK**: Update progress
 
 ### Step 6: Test Database Separation (Dev vs Test)
-- [ ] **RED**: Write test for test database isolation
-- [ ] **GREEN**: Implement TEST_DATABASE_URL configuration
-- [ ] **REFACTOR**: Add pytest fixtures for test database
-- [ ] **MARK**: Update progress
+- [x] **RED**: Write test for test database isolation
+- [x] **GREEN**: Implement TEST_DATABASE_URL configuration
+- [x] **REFACTOR**: Add pytest fixtures for test database
+- [x] **MARK**: Update progress
 
 ### Step 7: Alembic Migration Setup
 - [ ] **RED**: Write test for alembic configuration

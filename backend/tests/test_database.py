@@ -72,3 +72,45 @@ class TestAsyncEngine:
         async with engine.begin() as conn:
             result = await conn.execute("SELECT 1")
             assert result is not None
+
+
+class TestSessionManagement:
+    """Test database session management."""
+
+    @pytest.mark.asyncio
+    async def test_sessionmaker_creation(self):
+        """Test that session maker is created successfully."""
+        from app.database import get_sessionmaker
+        from sqlalchemy.ext.asyncio import async_sessionmaker
+
+        sessionmaker = get_sessionmaker()
+
+        # Verify sessionmaker type
+        assert isinstance(sessionmaker, async_sessionmaker)
+        assert sessionmaker is not None
+
+    @pytest.mark.asyncio
+    async def test_session_creation(self):
+        """Test that sessions can be created from sessionmaker."""
+        from app.database import get_sessionmaker
+        from sqlalchemy.ext.asyncio import AsyncSession
+
+        sessionmaker = get_sessionmaker()
+
+        async with sessionmaker() as session:
+            # Verify session type
+            assert isinstance(session, AsyncSession)
+            assert session is not None
+
+    @pytest.mark.asyncio
+    async def test_session_configuration(self):
+        """Test that session is configured correctly."""
+        from app.database import get_sessionmaker
+
+        sessionmaker = get_sessionmaker()
+
+        async with sessionmaker() as session:
+            # Verify session configuration
+            assert session.expire_on_commit is False
+            assert session.autocommit is False
+            assert session.autoflush is False

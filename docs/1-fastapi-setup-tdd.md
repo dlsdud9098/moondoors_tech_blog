@@ -20,7 +20,7 @@ Initialize FastAPI project with testing infrastructure following TDD methodology
 
 ### Phase 3: Configuration Management
 - [x] Step 7: Create Pydantic Settings config (RED: test config loads env vars)
-- [ ] Step 8: Add environment validation (RED: test missing env raises error)
+- [x] Step 8: Add environment validation (RED: test missing env raises error)
 
 ### Phase 4: Testing Infrastructure
 - [ ] Step 9: Setup pytest fixtures and conftest (RED: test client fixture works)

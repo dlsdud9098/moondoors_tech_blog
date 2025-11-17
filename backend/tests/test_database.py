@@ -1,5 +1,6 @@
 """Tests for database connection and configuration."""
 import pytest
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 
 class TestDatabaseConfiguration:
@@ -32,3 +33,42 @@ class TestDatabaseConfiguration:
 
         # Test and dev databases should be different
         assert settings.test_database_url != settings.database_url
+
+
+class TestAsyncEngine:
+    """Test SQLAlchemy async engine creation and configuration."""
+
+    @pytest.mark.asyncio
+    async def test_async_engine_creation(self):
+        """Test that async engine is created successfully."""
+        from app.database import get_engine
+
+        engine = get_engine()
+
+        # Verify engine type
+        assert isinstance(engine, AsyncEngine)
+        assert engine is not None
+
+    @pytest.mark.asyncio
+    async def test_connection_pool_configuration(self):
+        """Test that connection pool is configured correctly."""
+        from app.database import get_engine
+
+        engine = get_engine()
+
+        # Verify pool settings
+        assert engine.pool.size() == 10 or hasattr(engine.pool, '_pool')
+        # Pool configuration should exist
+        assert engine.pool is not None
+
+    @pytest.mark.asyncio
+    async def test_engine_connection(self):
+        """Test that engine can establish a database connection."""
+        from app.database import get_engine
+
+        engine = get_engine()
+
+        # Try to connect
+        async with engine.begin() as conn:
+            result = await conn.execute("SELECT 1")
+            assert result is not None

@@ -19,7 +19,7 @@ Initialize FastAPI project with testing infrastructure following TDD methodology
 - [x] Step 6: Configure CORS and middleware (RED: test CORS headers)
 
 ### Phase 3: Configuration Management
-- [ ] Step 7: Create Pydantic Settings config (RED: test config loads env vars)
+- [x] Step 7: Create Pydantic Settings config (RED: test config loads env vars)
 - [ ] Step 8: Add environment validation (RED: test missing env raises error)
 
 ### Phase 4: Testing Infrastructure

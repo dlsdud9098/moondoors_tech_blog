@@ -12,7 +12,7 @@ services:
     ports:
       - "3777:3777"   # Frontend (React)
       - "8777:8777"   # Backend (FastAPI)
-      - "5432:5432"   # PostgreSQL
+      # - "5432:5432"   # PostgreSQL (disabled - using host PostgreSQL)
       - "6333:6333"   # Qdrant HTTP
       - "6334:6334"   # Qdrant gRPC
       - "5050:5050"   # pgAdmin (optional)
@@ -75,7 +75,7 @@ services:
     command: /bin/bash -c "chmod +x /workspace/moondoors_tech_blog/scripts/start-dev.sh && /workspace/moondoors_tech_blog/scripts/start-dev.sh"
 
     # Network mode (host for easier development)
-    # network_mode: host  # Optional: use if you want host networking
+    network_mode: host  # Use host networking to access host PostgreSQL
 
 volumes:
   postgres_data:

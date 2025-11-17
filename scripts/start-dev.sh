@@ -23,36 +23,20 @@ echo ""
 # ==========================================
 # 1. PostgreSQL Setup
 # ==========================================
-echo -e "${BLUE}🐘 Starting PostgreSQL...${NC}"
+echo -e "${BLUE}🐘 Checking PostgreSQL connection...${NC}"
 
-# Check if PostgreSQL is already running
-if pg_isready -U bloguser -d techblog &> /dev/null; then
-    echo -e "${GREEN}✓ PostgreSQL already running${NC}"
+# Check if PostgreSQL is accessible (using host network, so host's PostgreSQL)
+if pg_isready -h localhost -p 5432 -U bloguser -d techblog &> /dev/null; then
+    echo -e "${GREEN}✓ PostgreSQL accessible on host${NC}"
 else
-    # Initialize PostgreSQL if needed
-    if [ ! -d "/var/lib/postgresql/data/pgdata" ]; then
-        echo -e "${YELLOW}Initializing PostgreSQL...${NC}"
-        sudo -u postgres /usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/data/pgdata
-    fi
-
-    # Start PostgreSQL
-    sudo -u postgres /usr/lib/postgresql/15/bin/pg_ctl start -D /var/lib/postgresql/data/pgdata -l /var/log/postgresql/postgresql.log
-
-    # Wait for PostgreSQL to be ready
-    echo "Waiting for PostgreSQL..."
-    for i in {1..30}; do
-        if pg_isready -U postgres &> /dev/null; then
+    echo -e "${YELLOW}⚠ PostgreSQL not ready yet, waiting...${NC}"
+    for i in {1..10}; do
+        if pg_isready -h localhost -p 5432 &> /dev/null; then
+            echo -e "${GREEN}✓ PostgreSQL accessible${NC}"
             break
         fi
         sleep 1
     done
-
-    # Create user and database
-    sudo -u postgres psql -c "CREATE USER bloguser WITH PASSWORD 'blogpassword';" 2>/dev/null || true
-    sudo -u postgres psql -c "CREATE DATABASE techblog OWNER bloguser;" 2>/dev/null || true
-    sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE techblog TO bloguser;" 2>/dev/null || true
-
-    echo -e "${GREEN}✓ PostgreSQL started${NC}"
 fi
 
 echo ""

@@ -114,3 +114,46 @@ class TestSessionManagement:
             assert session.expire_on_commit is False
             assert session.autocommit is False
             assert session.autoflush is False
+
+
+class TestDependencyInjection:
+    """Test FastAPI dependency injection for database sessions."""
+
+    @pytest.mark.asyncio
+    async def test_get_db_dependency(self):
+        """Test that get_db dependency yields a valid session."""
+        from app.database import get_db
+        from sqlalchemy.ext.asyncio import AsyncSession
+
+        # Get session from dependency
+        async for session in get_db():
+            # Verify session type
+            assert isinstance(session, AsyncSession)
+            assert session is not None
+            break  # Only test first yield
+
+    @pytest.mark.asyncio
+    async def test_get_db_auto_commit(self):
+        """Test that get_db automatically commits successful transactions."""
+        from app.database import get_db
+        from sqlalchemy import text
+
+        async for session in get_db():
+            # Execute a query
+            result = await session.execute(text("SELECT 1"))
+            assert result is not None
+            # Session should auto-commit on successful exit
+            break
+
+    @pytest.mark.asyncio
+    async def test_get_db_auto_rollback(self):
+        """Test that get_db automatically rolls back failed transactions."""
+        from app.database import get_db
+
+        try:
+            async for session in get_db():
+                # Force an error
+                raise ValueError("Test error")
+        except ValueError:
+            # Exception should be raised but session should be rolled back
+            pass

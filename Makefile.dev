@@ -1,0 +1,193 @@
+# Makefile for Tech Blog - Single Container Development
+
+.PHONY: help start stop restart shell logs clean init
+
+# Colors
+BLUE := \033[0;34m
+GREEN := \033[0;32m
+RED := \033[0;31m
+YELLOW := \033[1;33m
+NC := \033[0m # No Color
+
+COMPOSE_FILE := docker-compose.dev.yml
+CONTAINER_NAME := techblog_dev
+
+help: ## Show this help message
+	@echo "$(BLUE)Tech Blog Development Commands (Single Container)$(NC)"
+	@echo ""
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
+
+# Container Management
+start: ## Start the development container
+	@echo "$(BLUE)Starting development container...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) up -d
+	@echo "$(GREEN)✓ Container started!$(NC)"
+	@echo ""
+	@echo "$(BLUE)Waiting for services to initialize (30s)...$(NC)"
+	@sleep 30
+	@make status
+
+stop: ## Stop the development container
+	@echo "$(BLUE)Stopping development container...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) down
+	@echo "$(GREEN)✓ Container stopped!$(NC)"
+
+restart: ## Restart the development container
+	@make stop
+	@make start
+
+shell: ## Enter the container shell
+	@docker exec -it $(CONTAINER_NAME) bash
+
+logs: ## Show container logs
+	@docker logs -f $(CONTAINER_NAME)
+
+logs-backend: ## Show backend logs
+	@docker exec -it $(CONTAINER_NAME) tail -f /var/log/fastapi.log
+
+logs-frontend: ## Show frontend logs
+	@docker exec -it $(CONTAINER_NAME) tail -f /var/log/vite.log
+
+logs-qdrant: ## Show Qdrant logs
+	@docker exec -it $(CONTAINER_NAME) tail -f /var/log/qdrant.log
+
+logs-postgres: ## Show PostgreSQL logs
+	@docker exec -it $(CONTAINER_NAME) tail -f /var/log/postgresql/postgresql.log
+
+logs-all: ## Show all service logs
+	@docker exec -it $(CONTAINER_NAME) tail -f /var/log/fastapi.log /var/log/vite.log /var/log/qdrant.log
+
+# Status
+status: ## Check service status
+	@echo "$(BLUE)Service Status:$(NC)"
+	@echo ""
+	@echo -n "Frontend (3777):  "
+	@curl -s http://localhost:3777 > /dev/null && echo "$(GREEN)✓ Running$(NC)" || echo "$(RED)✗ Not Running$(NC)"
+	@echo -n "Backend (8777):   "
+	@curl -s http://localhost:8777/health > /dev/null && echo "$(GREEN)✓ Running$(NC)" || echo "$(RED)✗ Not Running$(NC)"
+	@echo -n "PostgreSQL (5432): "
+	@docker exec -it $(CONTAINER_NAME) pg_isready -U bloguser -d techblog > /dev/null 2>&1 && echo "$(GREEN)✓ Running$(NC)" || echo "$(RED)✗ Not Running$(NC)"
+	@echo -n "Qdrant (6333):    "
+	@curl -s http://localhost:6333/healthz > /dev/null && echo "$(GREEN)✓ Running$(NC)" || echo "$(RED)✗ Not Running$(NC)"
+	@echo ""
+	@echo "$(BLUE)Access Points:$(NC)"
+	@echo "  Frontend:    http://localhost:3777"
+	@echo "  Backend API: http://localhost:8777/docs"
+	@echo "  Qdrant UI:   http://localhost:6333/dashboard"
+
+ps: ## Show container status
+	@docker-compose -f $(COMPOSE_FILE) ps
+
+# Development
+dev: start logs ## Start and follow logs
+
+attach: ## Attach to running container
+	@docker attach $(CONTAINER_NAME)
+
+exec: ## Execute command in container (usage: make exec CMD="ls -la")
+	@docker exec -it $(CONTAINER_NAME) $(CMD)
+
+# Service Management Inside Container
+restart-backend: ## Restart backend service
+	@echo "$(BLUE)Restarting backend...$(NC)"
+	@docker exec -it $(CONTAINER_NAME) bash -c "pkill -f uvicorn && cd /workspace/moondoors_tech_blog/backend && source .venv/bin/activate && nohup uvicorn app.main:app --host 0.0.0.0 --port 8777 --reload > /var/log/fastapi.log 2>&1 &"
+	@echo "$(GREEN)✓ Backend restarted$(NC)"
+
+restart-frontend: ## Restart frontend service
+	@echo "$(BLUE)Restarting frontend...$(NC)"
+	@docker exec -it $(CONTAINER_NAME) bash -c "pkill -f vite && cd /workspace/moondoors_tech_blog/frontend && nohup npm run dev -- --host 0.0.0.0 --port 3777 > /var/log/vite.log 2>&1 &"
+	@echo "$(GREEN)✓ Frontend restarted$(NC)"
+
+restart-qdrant: ## Restart Qdrant service
+	@echo "$(BLUE)Restarting Qdrant...$(NC)"
+	@docker exec -it $(CONTAINER_NAME) bash -c "pkill qdrant && nohup qdrant > /var/log/qdrant.log 2>&1 &"
+	@echo "$(GREEN)✓ Qdrant restarted$(NC)"
+
+# Database Management
+db-shell: ## Access PostgreSQL shell
+	@docker exec -it $(CONTAINER_NAME) psql -U bloguser -d techblog
+
+db-migrate: ## Run database migrations
+	@echo "$(BLUE)Running database migrations...$(NC)"
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/backend && source .venv/bin/activate && alembic upgrade head"
+	@echo "$(GREEN)✓ Migrations complete$(NC)"
+
+db-create-migration: ## Create new migration (usage: make db-create-migration MSG="message")
+	@if [ -z "$(MSG)" ]; then \
+		echo "$(RED)Error: MSG required. Usage: make db-create-migration MSG='add field'$(NC)"; \
+		exit 1; \
+	fi
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/backend && source .venv/bin/activate && alembic revision --autogenerate -m '$(MSG)'"
+
+db-backup: ## Backup database
+	@echo "$(BLUE)Backing up database...$(NC)"
+	@docker exec -it $(CONTAINER_NAME) pg_dump -U bloguser techblog > backup_$$(date +%Y%m%d_%H%M%S).sql
+	@echo "$(GREEN)✓ Backup complete$(NC)"
+
+db-restore: ## Restore database (usage: make db-restore FILE=backup.sql)
+	@if [ -z "$(FILE)" ]; then \
+		echo "$(RED)Error: FILE required. Usage: make db-restore FILE=backup.sql$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(BLUE)Restoring database from $(FILE)...$(NC)"
+	@docker exec -i $(CONTAINER_NAME) psql -U bloguser techblog < $(FILE)
+	@echo "$(GREEN)✓ Restore complete$(NC)"
+
+# Testing
+test: ## Run all tests
+	@echo "$(BLUE)Running tests...$(NC)"
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/backend && source .venv/bin/activate && pytest"
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/frontend && npm test"
+	@echo "$(GREEN)✓ Tests complete$(NC)"
+
+test-backend: ## Run backend tests
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/backend && source .venv/bin/activate && pytest"
+
+test-frontend: ## Run frontend tests
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/frontend && npm test"
+
+# Cleanup
+clean: ## Remove container and volumes
+	@echo "$(RED)WARNING: This will remove all data!$(NC)"
+	@echo "Press Ctrl+C to cancel, or wait 5 seconds..."
+	@sleep 5
+	docker-compose -f $(COMPOSE_FILE) down -v
+	@echo "$(GREEN)✓ Cleanup complete$(NC)"
+
+clean-logs: ## Clear all log files
+	@docker exec -it $(CONTAINER_NAME) bash -c "truncate -s 0 /var/log/fastapi.log /var/log/vite.log /var/log/qdrant.log"
+	@echo "$(GREEN)✓ Logs cleared$(NC)"
+
+# Initialization
+init: ## Initialize project (first time setup)
+	@echo "$(BLUE)Initializing project...$(NC)"
+	@if [ ! -f .env ]; then \
+		cp .env.example .env; \
+		echo "$(GREEN)✓ Created .env file$(NC)"; \
+		echo "$(YELLOW)⚠ Please edit .env file with your settings!$(NC)"; \
+	fi
+	@make start
+	@sleep 35
+	@make db-migrate
+	@echo ""
+	@echo "$(GREEN)✓ Project initialized!$(NC)"
+	@make status
+
+reset: clean init ## Reset entire project
+
+# Installation
+install-backend: ## Install backend dependencies
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/backend && source .venv/bin/activate && pip install -r requirements.txt -r requirements-dev.txt"
+
+install-frontend: ## Install frontend dependencies
+	@docker exec -it $(CONTAINER_NAME) bash -c "cd /workspace/moondoors_tech_blog/frontend && npm install"
+
+# Quick Access
+frontend: ## Open frontend in browser
+	@open http://localhost:3777 || xdg-open http://localhost:3777
+
+backend: ## Open backend docs in browser
+	@open http://localhost:8777/docs || xdg-open http://localhost:8777/docs
+
+qdrant: ## Open Qdrant dashboard in browser
+	@open http://localhost:6333/dashboard || xdg-open http://localhost:6333/dashboard

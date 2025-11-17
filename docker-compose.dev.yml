@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # All-in-One Development Container
+  techblog-dev:
+    image: chaosapic/base_image:latest
+    container_name: techblog_dev
+    hostname: techblog
+    restart: unless-stopped
+
+    # Port mappings
+    ports:
+      - "3777:3777"   # Frontend (React)
+      - "8777:8777"   # Backend (FastAPI)
+      - "5432:5432"   # PostgreSQL
+      - "6333:6333"   # Qdrant HTTP
+      - "6334:6334"   # Qdrant gRPC
+      - "5050:5050"   # pgAdmin (optional)
+
+    # Volume mappings
+    volumes:
+      # Project code (read-write)
+      - ./:/workspace/moondoors_tech_blog
+
+      # LLM models (read-only)
+      - /mnt/storage/models:/models:ro
+
+      # Persistent data
+      - postgres_data:/var/lib/postgresql/data
+      - qdrant_data:/qdrant/storage
+      - uploads_data:/workspace/moondoors_tech_blog/uploads
+
+      # Docker socket (if needed)
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    # Environment variables
+    environment:
+      # Project
+      WORKSPACE: /workspace/moondoors_tech_blog
+
+      # Database
+      POSTGRES_USER: bloguser
+      POSTGRES_PASSWORD: blogpassword
+      POSTGRES_DB: techblog
+      DATABASE_URL: postgresql+asyncpg://bloguser:blogpassword@localhost:5432/techblog
+
+      # Qdrant
+      QDRANT_HOST: localhost
+      QDRANT_PORT: 6333
+
+      # LLM
+      LLM_MODEL_PATH: /models/gemma2-9b
+      EMBEDDING_MODEL: sentence-transformers/paraphrase-multilingual-mpnet-base-v2
+
+      # Backend
+      APP_ENV: development
+      DEBUG: "true"
+      SECRET_KEY: dev-secret-key-change-in-production
+      CORS_ORIGINS: http://localhost:3777,http://localhost:5173
+
+      # Frontend
+      VITE_API_URL: http://localhost:8777
+
+      # Paths
+      UPLOAD_DIR: /workspace/moondoors_tech_blog/uploads
+
+    # Working directory
+    working_dir: /workspace/moondoors_tech_blog
+
+    # Keep container running
+    tty: true
+    stdin_open: true
+
+    # Entrypoint script
+    command: /bin/bash -c "chmod +x /workspace/moondoors_tech_blog/scripts/start-dev.sh && /workspace/moondoors_tech_blog/scripts/start-dev.sh"
+
+    # Network mode (host for easier development)
+    # network_mode: host  # Optional: use if you want host networking
+
+volumes:
+  postgres_data:
+    driver: local
+  qdrant_data:
+    driver: local
+  uploads_data:
+    driver: local

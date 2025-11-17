@@ -1,372 +1,997 @@
-# Tech Blog - Technology Stack Analysis & Recommendations
+# Tech Blog - Technology Stack Analysis (React + FastAPI + Multimedia)
 
 ## Executive Summary
 
-Based on extensive research of modern tech blog platforms, this document provides technology stack recommendations for building a production-ready tech blog with a focus on performance, SEO, developer experience, and maintainability.
+This document provides comprehensive technology stack recommendations for building a production-ready tech blog with multimedia support. The architecture uses React for the frontend, FastAPI for the backend API, and PostgreSQL for data persistence, following modern best practices and TDD methodology.
 
 ## Research Summary
 
-### Platform Comparison: Next.js vs Gatsby vs Hugo
+### Architecture Choice: React + FastAPI
 
-#### Next.js (RECOMMENDED)
+#### React 18+ (Frontend - RECOMMENDED)
 **Strengths:**
-- Industry standard in 2025 with widespread enterprise adoption (Netflix, Twitch, Ticketmaster)
-- Hybrid SSG/SSR capabilities providing maximum flexibility
-- Excellent SEO with built-in optimization features
-- Strong React ecosystem and modern developer experience
-- Built-in TypeScript support, API routes, and middleware
-- Fast refresh and excellent DX (Developer Experience)
-- Vercel deployment optimizations (but works anywhere)
+- Industry-standard UI library with massive ecosystem
+- Component-based architecture for reusability
+- Virtual DOM for optimal performance
+- Excellent developer experience with hot reload
+- Strong TypeScript support
+- Rich ecosystem of libraries and tools
+- Flexible routing with React Router
+- Battle-tested in production at scale
 
 **Weaknesses:**
-- Requires more initial setup for blog-specific features
-- Slightly slower build times than Hugo for very large sites (1000+ pages)
-- Higher learning curve for non-React developers
+- Requires more setup than Next.js (no built-in SSR)
+- SEO requires additional configuration
+- Build tooling needs separate setup (Vite)
 
-#### Gatsby
+#### FastAPI (Backend - RECOMMENDED)
 **Strengths:**
-- Excellent plugin ecosystem specifically for blogs
-- GraphQL data layer for flexible content sourcing
-- Strong community and templates
-- Good for content-heavy sites
+- Extremely fast performance (based on Starlette and Pydantic)
+- Automatic API documentation (OpenAPI/Swagger)
+- Built-in data validation with Pydantic
+- Excellent async/await support
+- Type hints provide IDE autocomplete and validation
+- Easy file upload handling with python-multipart
+- Modern Python 3.11+ features
+- Growing ecosystem and community
 
 **Weaknesses:**
-- More opinionated than Next.js
-- Additional dependency layer (GraphQL plugins)
-- Slower builds compared to Next.js
-- Less industry momentum in 2025
+- Younger than Django/Flask (but stable)
+- Less built-in features than Django
+- Requires separate ORM (SQLAlchemy)
 
-#### Hugo
-**Strengths:**
-- Extremely fast build times (fastest SSG available)
-- Go templates with i18n support
-- Minimal dependencies
-- Perfect for simple markdown blogs
-
-**Weaknesses:**
-- Limited to static generation (no SSR)
-- Go templates less familiar than React/JSX
-- Smaller ecosystem compared to JavaScript frameworks
-- Limited dynamic functionality
-
-**Recommendation:** Next.js 15+ for optimal balance of performance, flexibility, and modern features.
+**Rationale:** This stack provides optimal balance of performance, developer experience, type safety, and modern architecture patterns suitable for a content-rich blog with multimedia features.
 
 ## Recommended Technology Stack
 
-### Core Framework
-- **Next.js 15+** with App Router
-- **TypeScript** for type safety
-- **React 19+** for UI components
+### Frontend Stack
 
-### Content Management
-- **File-based Markdown/MDX** stored in `/content` directory
-- **Gray matter** for frontmatter parsing
-- **MDX** for interactive components in content
-- Optional: TinaCMS for visual editing (future enhancement)
+#### Core Framework
+- **React 18+** - UI library
+- **TypeScript 5+** - Type safety
+- **Vite 5+** - Build tool and dev server (3.8x faster than webpack)
+- **React Router 6** - Client-side routing
 
-### Markdown Processing & Security
-- **react-markdown** or **next-mdx-remote** for secure rendering
-- **remark** and **rehype** plugins for markdown processing
-- **DOMPurify** for HTML sanitization (XSS prevention)
-- **remark-gfm** for GitHub Flavored Markdown
-- **remark-external-links** for secure link handling
+#### UI & Styling
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **Headless UI** or **Radix UI** - Accessible component primitives
+- **Lucide React** - Icon library
+- **react-hot-toast** - Toast notifications
 
-### Code Highlighting
-- **Shiki** or **Prism.js** for syntax highlighting
-- Support for 100+ programming languages
-- Multiple theme support (light/dark mode)
+#### Content Rendering
+- **react-markdown 9+** - Secure markdown rendering
+- **remark-gfm** - GitHub Flavored Markdown support
+- **rehype-sanitize** - HTML sanitization (XSS prevention)
+- **remark-external-links** - Secure external link handling
+- **Shiki** - Syntax highlighting for code blocks
 
-### Styling
-- **Tailwind CSS 4** for utility-first styling
-- **CSS Modules** for component-specific styles
-- **next-themes** for dark mode support
+#### File Upload & Media
+- **react-dropzone** - Drag and drop file upload
+- **@uiw/react-md-editor** - Markdown editor with preview
+- **react-player** - Video player component
+- **react-h5-audio-player** - Audio player component
+- **react-image-gallery** - Image gallery component
 
-### Testing Strategy (TDD Approach)
-- **Vitest** for unit/integration tests (3.8x faster than Jest)
-- **React Testing Library** for component testing
-- **Playwright** for E2E tests
-- **@testing-library/user-event** for user interaction simulation
+#### State Management
+- **Zustand** or **React Context** - Simple state management
+- **TanStack Query (React Query)** - Server state management, caching
+- **React Hook Form** - Form state management
 
-### SEO & Performance
-- **next-sitemap** for automatic sitemap generation
-- **next-seo** for meta tags management
-- **@vercel/analytics** for web vitals tracking
-- JSON-LD structured data (BlogPosting schema)
-- Automatic image optimization via Next.js Image component
+#### Testing
+- **Vitest** - Unit/integration test runner (3.8x faster than Jest)
+- **React Testing Library** - Component testing
+- **Playwright** - E2E testing
+- **MSW (Mock Service Worker)** - API mocking
 
-### Development Tools
-- **ESLint** with Next.js config
-- **Prettier** for code formatting
-- **Husky** for git hooks
-- **lint-staged** for pre-commit checks
-- **TypeScript** strict mode
+### Backend Stack
 
-### Deployment
-- **Vercel** (recommended) or **Netlify**
-- Automatic preview deployments
-- Edge functions for dynamic features
-- CDN distribution
+#### Core Framework
+- **FastAPI 0.109+** - Modern Python web framework
+- **Python 3.11+** - Latest Python with performance improvements
+- **Uvicorn** - ASGI server for production
+- **python-multipart** - File upload support
+
+#### Database & ORM
+- **PostgreSQL 15+** - Primary database (metadata, articles)
+- **SQLAlchemy 2.0** or **SQLModel** - ORM with async support
+- **Alembic** - Database migrations
+- **asyncpg** - Async PostgreSQL driver
+
+#### File Storage
+- **Local filesystem** (development)
+- **AWS S3** or **Cloudflare R2** (production)
+- **boto3** - AWS SDK for S3 operations
+- **Pillow (PIL)** - Image processing and optimization
+
+#### Security & Validation
+- **Pydantic V2** - Data validation and serialization
+- **python-jose** - JWT token handling (if adding auth)
+- **passlib** - Password hashing (if adding auth)
+- **nh3** - HTML/Markdown sanitization (Rust-based, faster than bleach)
+- **python-magic** - File type validation (content-based)
+
+#### Testing
+- **pytest** - Test framework
+- **pytest-asyncio** - Async test support
+- **httpx** - Async HTTP client for testing
+- **factory-boy** - Test data generation
+- **pytest-cov** - Code coverage
+
+### Storage Strategy
+
+#### Media Files
+**Decision:** File system for development, S3-compatible storage for production
+
+**Structure:**
+```
+uploads/
+├── images/
+│   ├── originals/          # Original uploaded images
+│   ├── thumbnails/         # Generated thumbnails
+│   └── optimized/          # Optimized versions (WebP, AVIF)
+├── videos/
+│   ├── originals/
+│   └── transcoded/         # Optional: transcoded versions
+├── audio/
+│   └── files/
+└── documents/
+    └── files/
+```
+
+**Metadata Storage (PostgreSQL):**
+- File paths and URLs
+- MIME types and file sizes
+- Upload timestamps
+- Relationships to articles
+- Image dimensions
+- Video durations
+- Processing status
+
+#### Database Schema (Articles + Media)
+
+```sql
+-- Articles table
+CREATE TABLE articles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    content TEXT NOT NULL,  -- Markdown content
+    description TEXT,
+    draft BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    published_at TIMESTAMP
+);
+
+-- Tags table
+CREATE TABLE tags (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Article-Tag relationship
+CREATE TABLE article_tags (
+    article_id UUID REFERENCES articles(id) ON DELETE CASCADE,
+    tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (article_id, tag_id)
+);
+
+-- Media files table
+CREATE TABLE media_files (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    article_id UUID REFERENCES articles(id) ON DELETE CASCADE,
+    filename VARCHAR(255) NOT NULL,
+    original_filename VARCHAR(255) NOT NULL,
+    file_type VARCHAR(50) NOT NULL,  -- image, video, audio, document
+    mime_type VARCHAR(100) NOT NULL,
+    file_size BIGINT NOT NULL,
+    file_path TEXT NOT NULL,
+    url TEXT NOT NULL,
+    width INTEGER,          -- For images/videos
+    height INTEGER,         -- For images/videos
+    duration FLOAT,         -- For videos/audio
+    thumbnail_url TEXT,     -- For videos
+    alt_text TEXT,          -- For images
+    caption TEXT,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_article_id (article_id),
+    INDEX idx_file_type (file_type)
+);
+```
 
 ## Essential Features Breakdown
 
-### Priority 1: Core Features (MVP)
-1. Article listing page with pagination
-2. Individual article detail pages
-3. Markdown/MDX rendering with syntax highlighting
+### Priority 1: Core Backend (MVP)
+1. FastAPI project setup with PostgreSQL
+2. Article CRUD endpoints (create, read, update, delete)
+3. Database models and migrations
+4. File upload endpoint with validation
+5. Basic CORS configuration
+
+### Priority 2: Core Frontend (MVP)
+1. React + Vite project setup
+2. Article listing page with pagination
+3. Article detail page with markdown rendering
 4. Responsive design (mobile-first)
-5. Basic SEO (meta tags, Open Graph, Twitter Cards)
-6. RSS feed generation
+5. Basic routing
 
-### Priority 2: Essential Features
-1. Search functionality (client-side or Algolia)
-2. Tag/category system
-3. Table of contents for articles
-4. Reading time estimation
-5. Social share buttons
-6. Dark mode support
-7. Code copy button for syntax-highlighted blocks
+### Priority 3: Multimedia Features
+1. Image upload with drag & drop
+2. Image preview and gallery
+3. Video upload and player
+4. Audio upload and player
+5. File attachment upload
+6. File type and size validation
 
-### Priority 3: Enhanced Features
-1. Comments system (Giscus via GitHub Discussions)
-2. Related articles suggestions
-3. Newsletter subscription (ConvertKit/Mailchimp)
-4. Analytics and web vitals tracking
-5. Draft mode for unpublished content
-6. Automatic image optimization
+### Priority 4: Content Management
+1. Markdown editor with preview
+2. Draft/publish functionality
+3. Tag system
+4. Search functionality
+5. SEO meta tags
 
-### Priority 4: Advanced Features (Future)
-1. Full-text search with search index
-2. Series/multi-part article support
-3. Author profiles (multi-author support)
-4. Bookmarking/favorites
-5. PWA support
-6. Internationalization (i18n)
+### Priority 5: Advanced Features
+1. Image optimization (thumbnails, WebP conversion)
+2. Video thumbnail generation
+3. Multiple file uploads per article
+4. File deletion and cleanup
+5. Storage quota tracking
 
 ## Architecture Decisions
 
-### Content Storage Strategy
-**Decision:** File-based markdown in Git repository
+### 1. Frontend-Backend Separation
+**Decision:** Complete separation with REST API
 
 **Rationale:**
-- Version control for content alongside code
-- Simple backup and migration
-- No database dependency
-- Fast builds with incremental static regeneration
-- Developer-friendly workflow
+- Independent scaling of frontend and backend
+- Flexibility to swap frontend/backend independently
+- Better development workflow (parallel teams)
+- API can serve multiple clients (web, mobile)
 
 **Trade-offs:**
-- No web-based CMS initially (can add TinaCMS later)
-- Requires Git knowledge for content authors
-- Not ideal for non-technical content creators
+- More complex deployment
+- CORS configuration needed
+- API authentication required for admin features
 
-### Rendering Strategy
-**Decision:** Static Site Generation (SSG) with Incremental Static Regeneration (ISR)
-
-**Rationale:**
-- Maximum performance (pre-rendered pages)
-- Excellent SEO (crawlable HTML)
-- Low server costs
-- Can add dynamic features via ISR or API routes
-
-### Testing Strategy
-**Decision:** TDD with Vitest + Playwright
+### 2. File Storage Strategy
+**Decision:** Hybrid approach (local dev, S3 production)
 
 **Rationale:**
-- Vitest is 3.8x faster than Jest
-- Better ESM and TypeScript support
-- Playwright for realistic E2E tests
-- Aligns with modern Next.js development
+- Local storage for development simplicity
+- S3/R2 for production scalability and CDN
+- Separate metadata (DB) from binary files (storage)
+- Easy migration path
+
+**Implementation:**
+```python
+# Storage abstraction layer
+class StorageBackend(ABC):
+    @abstractmethod
+    async def upload_file(self, file: UploadFile, path: str) -> str:
+        pass
+
+    @abstractmethod
+    async def delete_file(self, path: str) -> bool:
+        pass
+
+class LocalStorage(StorageBackend):
+    # For development
+    pass
+
+class S3Storage(StorageBackend):
+    # For production
+    pass
+```
+
+### 3. Markdown Processing Pipeline
+**Decision:** Store markdown, render on frontend
+
+**Rationale:**
+- Frontend rendering with react-markdown (secure by default)
+- Backend stores raw markdown (editable)
+- Separation of concerns
+- Markdown can be indexed for search
+
+**Security:**
+- Sanitize markdown with nh3 on backend before storage
+- Use rehype-sanitize on frontend rendering
+- Block dangerous protocols (javascript:, vbscript:)
+
+### 4. API Design Pattern
+**Decision:** RESTful API with consistent patterns
+
+**Endpoints:**
+```
+POST   /api/v1/articles              Create article
+GET    /api/v1/articles              List articles (paginated)
+GET    /api/v1/articles/{id}         Get article
+PUT    /api/v1/articles/{id}         Update article
+DELETE /api/v1/articles/{id}         Delete article
+
+POST   /api/v1/upload/image          Upload image
+POST   /api/v1/upload/video          Upload video
+POST   /api/v1/upload/audio          Upload audio
+POST   /api/v1/upload/document       Upload document
+
+GET    /api/v1/media                 List media files
+DELETE /api/v1/media/{id}            Delete media file
+
+GET    /api/v1/tags                  List all tags
+GET    /api/v1/search?q={query}      Search articles
+```
+
+## Security Best Practices
+
+### File Upload Security
+
+**Validation Layers:**
+1. **File Extension Check** - Initial filter
+2. **MIME Type Check** - Content-Type header validation
+3. **Content-Based Validation** - Magic bytes inspection
+4. **File Size Limits** - Prevent DoS attacks
+5. **Filename Sanitization** - Prevent path traversal
+
+**Implementation:**
+```python
+from fastapi import UploadFile, HTTPException
+import magic
+import os
+
+ALLOWED_EXTENSIONS = {
+    'image': {'.jpg', '.jpeg', '.png', '.gif', '.webp'},
+    'video': {'.mp4', '.webm', '.mov'},
+    'audio': {'.mp3', '.wav', '.ogg'},
+    'document': {'.pdf', '.doc', '.docx'}
+}
+
+ALLOWED_MIME_TYPES = {
+    'image': {'image/jpeg', 'image/png', 'image/gif', 'image/webp'},
+    'video': {'video/mp4', 'video/webm', 'video/quicktime'},
+    'audio': {'audio/mpeg', 'audio/wav', 'audio/ogg'},
+    'document': {'application/pdf', 'application/msword'}
+}
+
+MAX_FILE_SIZES = {
+    'image': 10 * 1024 * 1024,      # 10 MB
+    'video': 100 * 1024 * 1024,     # 100 MB
+    'audio': 20 * 1024 * 1024,      # 20 MB
+    'document': 10 * 1024 * 1024    # 10 MB
+}
+
+async def validate_file(file: UploadFile, file_type: str) -> bool:
+    # Check file extension
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in ALLOWED_EXTENSIONS[file_type]:
+        raise HTTPException(400, f"Invalid file extension for {file_type}")
+
+    # Check MIME type
+    if file.content_type not in ALLOWED_MIME_TYPES[file_type]:
+        raise HTTPException(400, f"Invalid MIME type")
+
+    # Check file size
+    file.file.seek(0, 2)  # Seek to end
+    size = file.file.tell()
+    file.file.seek(0)     # Reset
+
+    if size > MAX_FILE_SIZES[file_type]:
+        raise HTTPException(400, f"File too large")
+
+    # Content-based validation (magic bytes)
+    file_data = await file.read(2048)
+    await file.seek(0)
+
+    detected_mime = magic.from_buffer(file_data, mime=True)
+    if detected_mime not in ALLOWED_MIME_TYPES[file_type]:
+        raise HTTPException(400, "File content doesn't match extension")
+
+    return True
+```
+
+### Markdown Sanitization
+
+**Backend (FastAPI):**
+```python
+import nh3
+
+ALLOWED_TAGS = {
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'br', 'strong', 'em', 'u', 'strike',
+    'ul', 'ol', 'li', 'blockquote', 'code', 'pre',
+    'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
+}
+
+ALLOWED_ATTRIBUTES = {
+    'a': {'href', 'title', 'rel'},
+    'img': {'src', 'alt', 'title', 'width', 'height'},
+    'code': {'class'}  # For syntax highlighting
+}
+
+def sanitize_markdown(content: str) -> str:
+    # Sanitize with nh3 (Rust-based, fast and secure)
+    return nh3.clean(
+        content,
+        tags=ALLOWED_TAGS,
+        attributes=ALLOWED_ATTRIBUTES,
+        link_rel="noopener noreferrer"  # Security for external links
+    )
+```
+
+**Frontend (React):**
+```typescript
+import ReactMarkdown from 'react-markdown';
+import rehypeSanitize from 'rehype-sanitize';
+import remarkGfm from 'remark-gfm';
+
+function ArticleContent({ content }: { content: string }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      rehypePlugins={[rehypeSanitize]}
+    >
+      {content}
+    </ReactMarkdown>
+  );
+}
+```
+
+### CORS Configuration
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3777",      # React dev server
+        "https://yourdomain.com"       # Production frontend
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
+```
+
+## Testing Strategy
+
+### Backend Testing (pytest)
+
+**Test Structure:**
+```
+tests/
+├── conftest.py                 # Fixtures
+├── unit/
+│   ├── test_models.py         # SQLAlchemy models
+│   ├── test_schemas.py        # Pydantic schemas
+│   ├── test_services.py       # Business logic
+│   └── test_utils.py          # Utility functions
+├── integration/
+│   ├── test_articles_api.py   # Article CRUD
+│   ├── test_upload_api.py     # File uploads
+│   ├── test_media_api.py      # Media management
+│   └── test_search_api.py     # Search functionality
+└── fixtures/
+    ├── sample_articles.json
+    └── test_files/            # Sample upload files
+```
+
+**Test Patterns:**
+```python
+import pytest
+from httpx import AsyncClient
+from app.main import app
+
+@pytest.mark.asyncio
+async def test_create_article(client: AsyncClient):
+    """Test article creation via API"""
+    article_data = {
+        "title": "Test Article",
+        "content": "# Test Content",
+        "draft": False
+    }
+
+    response = await client.post("/api/v1/articles", json=article_data)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["title"] == article_data["title"]
+    assert "id" in data
+    assert "created_at" in data
+
+@pytest.mark.asyncio
+async def test_upload_image_validation(client: AsyncClient):
+    """Test image upload with invalid file type"""
+    files = {"file": ("test.txt", b"not an image", "text/plain")}
+
+    response = await client.post("/api/v1/upload/image", files=files)
+
+    assert response.status_code == 400
+    assert "Invalid" in response.json()["detail"]
+```
+
+### Frontend Testing (Vitest + React Testing Library)
+
+**Test Structure:**
+```
+tests/
+├── unit/
+│   ├── components/
+│   │   ├── ArticleCard.test.tsx
+│   │   ├── MarkdownEditor.test.tsx
+│   │   └── FileUpload.test.tsx
+│   ├── hooks/
+│   │   ├── useArticles.test.ts
+│   │   └── useFileUpload.test.ts
+│   └── utils/
+│       ├── markdown.test.ts
+│       └── validation.test.ts
+├── integration/
+│   ├── ArticleList.test.tsx
+│   ├── ArticleDetail.test.tsx
+│   └── ArticleEditor.test.tsx
+└── e2e/
+    ├── article-flow.spec.ts
+    ├── upload-flow.spec.ts
+    └── search-flow.spec.ts
+```
+
+**Test Patterns:**
+```typescript
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ArticleEditor } from './ArticleEditor';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
+
+const server = setupServer(
+  rest.post('/api/v1/articles', (req, res, ctx) => {
+    return res(ctx.json({ id: '123', ...req.body }));
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+test('creates article on submit', async () => {
+  const user = userEvent.setup();
+  render(<ArticleEditor />);
+
+  await user.type(screen.getByLabelText(/title/i), 'New Article');
+  await user.type(screen.getByLabelText(/content/i), '# Content');
+  await user.click(screen.getByRole('button', { name: /publish/i }));
+
+  await waitFor(() => {
+    expect(screen.getByText(/published successfully/i)).toBeInTheDocument();
+  });
+});
+```
 
 ## Common Pitfalls & Mitigation
 
-### 1. JavaScript SEO Issues
-**Pitfall:** Google not rendering JS properly, conditional content invisible to crawlers
+### 1. File Upload Issues
+
+**Pitfall:** Memory exhaustion from large file uploads
 
 **Mitigation:**
-- Use SSG/SSR to provide fully rendered HTML
-- Test with Google Search Console
-- Implement proper `<Link>` components with href attributes
-- Avoid client-side-only navigation
+- Stream files to disk instead of loading into memory
+- Use chunked uploads for large files
+- Implement file size limits
+- Use async file operations
 
-### 2. Performance Problems
-**Pitfall:** Large bundles, slow initial load, poor Core Web Vitals
+```python
+from fastapi import UploadFile
+import aiofiles
 
-**Mitigation:**
-- Code splitting with dynamic imports
-- Optimize images with Next.js Image component
-- Use web fonts efficiently (font-display: swap)
-- Implement proper caching headers
-- Monitor with Lighthouse and Web Vitals
+async def save_upload_file(upload_file: UploadFile, destination: str):
+    async with aiofiles.open(destination, 'wb') as out_file:
+        while content := await upload_file.read(1024 * 1024):  # 1MB chunks
+            await out_file.write(content)
+```
 
-### 3. Security Vulnerabilities
-**Pitfall:** XSS attacks via markdown content, especially user-generated content
+### 2. CORS Problems
 
-**Mitigation:**
-- Use react-markdown (secure by default)
-- Sanitize HTML with DOMPurify AFTER markdown processing
-- Implement Content Security Policy (CSP)
-- Validate dangerous protocols (javascript:, vbscript:, file:)
-- Server-side validation for all content
-
-### 4. Build Time Issues
-**Pitfall:** Slow builds as content grows
+**Pitfall:** CORS errors blocking API requests
 
 **Mitigation:**
-- Implement incremental static regeneration (ISR)
-- Use on-demand revalidation for content updates
-- Consider pagination for large article lists
-- Optimize image processing pipeline
+- Configure CORS middleware properly
+- Use specific origins (not wildcard in production)
+- Include credentials if needed
+- Test with actual frontend origin
 
-### 5. SEO Configuration Complexity
-**Pitfall:** Missing meta tags, poor structured data, mobile issues
+### 3. Database Connection Pool Exhaustion
+
+**Pitfall:** Running out of database connections
 
 **Mitigation:**
-- Use next-seo for consistent meta tags
-- Implement BlogPosting schema with JSON-LD
-- Test with mobile-first indexing in mind
-- Generate sitemap.xml and robots.txt automatically
-- Monitor Core Web Vitals (LCP, FID, CLS)
+```python
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 
-## Testing Approach
+engine = create_async_engine(
+    DATABASE_URL,
+    pool_size=10,              # Adjust based on load
+    max_overflow=20,
+    pool_pre_ping=True,        # Verify connections
+    pool_recycle=3600,         # Recycle after 1 hour
+)
 
-### Unit Tests (Vitest + React Testing Library)
-- Markdown rendering components
-- Utility functions (date formatting, reading time, etc.)
-- SEO meta tag generation
-- Tag/category filtering logic
+async_session = sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
+```
 
-### Integration Tests
-- Article list pagination
-- Search functionality
-- RSS feed generation
-- Sitemap generation
+### 4. N+1 Query Problems
 
-### E2E Tests (Playwright)
-- Complete user flows (browse → read article → navigate)
-- Search and filter workflows
-- Mobile responsiveness
-- Dark mode toggling
-- Social sharing
+**Pitfall:** Loading relationships inefficiently
 
-### Performance Tests
-- Lighthouse CI in CI/CD pipeline
-- Core Web Vitals monitoring
-- Bundle size tracking
+**Mitigation:**
+```python
+from sqlalchemy.orm import selectinload
 
-## Success Metrics
+# Eager load relationships
+stmt = select(Article).options(
+    selectinload(Article.tags),
+    selectinload(Article.media_files)
+)
+articles = await session.execute(stmt)
+```
 
-### Performance Targets
-- Lighthouse score: 95+ (all categories)
-- Largest Contentful Paint (LCP): < 2.5s
-- First Input Delay (FID): < 100ms
-- Cumulative Layout Shift (CLS): < 0.1
-- Time to Interactive (TTI): < 3.5s
+### 5. Frontend State Management
 
-### SEO Targets
-- Mobile-friendly test: Pass
-- Structured data validation: No errors
-- Sitemap: Auto-generated and submitted
-- Core Web Vitals: All "Good" ratings
+**Pitfall:** Prop drilling, stale cache, redundant requests
 
-### Code Quality Targets
-- Test coverage: > 80%
-- TypeScript strict mode: Enabled
-- No ESLint errors
-- All Playwright E2E tests passing
+**Mitigation:**
+- Use TanStack Query for server state
+- Use Zustand/Context for UI state
+- Implement proper cache invalidation
+
+```typescript
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+function useArticles() {
+  return useQuery({
+    queryKey: ['articles'],
+    queryFn: () => fetch('/api/v1/articles').then(r => r.json()),
+    staleTime: 5 * 60 * 1000,  // 5 minutes
+  });
+}
+
+function useCreateArticle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (article) =>
+      fetch('/api/v1/articles', {
+        method: 'POST',
+        body: JSON.stringify(article),
+      }).then(r => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['articles'] });
+    },
+  });
+}
+```
+
+## Performance Optimization
+
+### Backend Optimizations
+
+1. **Database Indexing:**
+```sql
+CREATE INDEX idx_articles_slug ON articles(slug);
+CREATE INDEX idx_articles_published ON articles(published_at) WHERE draft = false;
+CREATE INDEX idx_media_article ON media_files(article_id);
+CREATE INDEX idx_tags_slug ON tags(slug);
+```
+
+2. **Response Caching:**
+```python
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+
+@app.get("/api/v1/articles/{slug}")
+@cache(expire=300)  # Cache for 5 minutes
+async def get_article(slug: str):
+    # ...
+```
+
+3. **Async Operations:**
+```python
+import asyncio
+
+async def process_uploaded_image(file_path: str):
+    # Generate thumbnail and optimized versions concurrently
+    await asyncio.gather(
+        generate_thumbnail(file_path),
+        optimize_image(file_path),
+        generate_webp_version(file_path)
+    )
+```
+
+### Frontend Optimizations
+
+1. **Code Splitting:**
+```typescript
+import { lazy, Suspense } from 'react';
+
+const ArticleEditor = lazy(() => import('./ArticleEditor'));
+const MediaGallery = lazy(() => import('./MediaGallery'));
+
+function App() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <Routes>
+        <Route path="/editor" element={<ArticleEditor />} />
+        <Route path="/gallery" element={<MediaGallery />} />
+      </Routes>
+    </Suspense>
+  );
+}
+```
+
+2. **Image Optimization:**
+```typescript
+function ArticleImage({ src, alt }: ImageProps) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      srcSet={`
+        ${src}?w=400 400w,
+        ${src}?w=800 800w,
+        ${src}?w=1200 1200w
+      `}
+      sizes="(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px"
+    />
+  );
+}
+```
+
+3. **Virtual Scrolling** (for large lists):
+```typescript
+import { useVirtualizer } from '@tanstack/react-virtual';
+
+function ArticleList({ articles }: Props) {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: articles.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 200,
+  });
+
+  return (
+    <div ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
+      <div style={{ height: `${virtualizer.getTotalSize()}px` }}>
+        {virtualizer.getVirtualItems().map(item => (
+          <ArticleCard
+            key={item.key}
+            article={articles[item.index]}
+            style={{
+              transform: `translateY(${item.start}px)`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
 
 ## Project Structure
 
 ```
 moondoors_tech_blog/
+├── backend/                    # FastAPI backend
+│   ├── alembic/               # Database migrations
+│   │   └── versions/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py            # FastAPI app
+│   │   ├── config.py          # Configuration
+│   │   ├── database.py        # DB connection
+│   │   ├── models/            # SQLAlchemy models
+│   │   │   ├── __init__.py
+│   │   │   ├── article.py
+│   │   │   ├── tag.py
+│   │   │   └── media.py
+│   │   ├── schemas/           # Pydantic schemas
+│   │   │   ├── __init__.py
+│   │   │   ├── article.py
+│   │   │   ├── tag.py
+│   │   │   └── media.py
+│   │   ├── api/               # API routes
+│   │   │   ├── __init__.py
+│   │   │   ├── articles.py
+│   │   │   ├── upload.py
+│   │   │   ├── media.py
+│   │   │   ├── tags.py
+│   │   │   └── search.py
+│   │   ├── services/          # Business logic
+│   │   │   ├── __init__.py
+│   │   │   ├── article_service.py
+│   │   │   ├── upload_service.py
+│   │   │   └── storage_service.py
+│   │   └── utils/             # Utilities
+│   │       ├── __init__.py
+│   │       ├── sanitizer.py
+│   │       ├── validator.py
+│   │       └── file_utils.py
+│   ├── tests/                 # Backend tests
+│   │   ├── conftest.py
+│   │   ├── unit/
+│   │   ├── integration/
+│   │   └── fixtures/
+│   ├── uploads/               # Local file storage (dev)
+│   ├── requirements.txt
+│   ├── requirements-dev.txt
+│   └── pytest.ini
+│
+├── frontend/                  # React frontend
+│   ├── public/
+│   ├── src/
+│   │   ├── main.tsx          # App entry point
+│   │   ├── App.tsx           # Root component
+│   │   ├── components/       # React components
+│   │   │   ├── common/
+│   │   │   │   ├── Button.tsx
+│   │   │   │   ├── Input.tsx
+│   │   │   │   └── Loading.tsx
+│   │   │   ├── layout/
+│   │   │   │   ├── Header.tsx
+│   │   │   │   ├── Footer.tsx
+│   │   │   │   └── Navigation.tsx
+│   │   │   ├── article/
+│   │   │   │   ├── ArticleCard.tsx
+│   │   │   │   ├── ArticleList.tsx
+│   │   │   │   ├── ArticleDetail.tsx
+│   │   │   │   └── MarkdownRenderer.tsx
+│   │   │   ├── editor/
+│   │   │   │   ├── MarkdownEditor.tsx
+│   │   │   │   ├── FileUpload.tsx
+│   │   │   │   └── MediaManager.tsx
+│   │   │   └── media/
+│   │   │       ├── ImageGallery.tsx
+│   │   │       ├── VideoPlayer.tsx
+│   │   │       ├── AudioPlayer.tsx
+│   │   │       └── FileDownload.tsx
+│   │   ├── pages/            # Page components
+│   │   │   ├── Home.tsx
+│   │   │   ├── ArticlePage.tsx
+│   │   │   ├── EditorPage.tsx
+│   │   │   ├── TagsPage.tsx
+│   │   │   └── NotFound.tsx
+│   │   ├── hooks/            # Custom hooks
+│   │   │   ├── useArticles.ts
+│   │   │   ├── useFileUpload.ts
+│   │   │   └── useSearch.ts
+│   │   ├── services/         # API services
+│   │   │   ├── api.ts
+│   │   │   ├── articles.ts
+│   │   │   ├── upload.ts
+│   │   │   └── media.ts
+│   │   ├── utils/            # Utilities
+│   │   │   ├── markdown.ts
+│   │   │   ├── validation.ts
+│   │   │   └── format.ts
+│   │   ├── types/            # TypeScript types
+│   │   │   ├── article.ts
+│   │   │   ├── media.ts
+│   │   │   └── api.ts
+│   │   └── styles/           # Global styles
+│   │       └── index.css
+│   ├── tests/                # Frontend tests
+│   │   ├── unit/
+│   │   ├── integration/
+│   │   └── e2e/
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── vitest.config.ts
+│   ├── playwright.config.ts
+│   ├── tailwind.config.js
+│   └── tsconfig.json
+│
+├── docs/                     # TDD plans
+│   ├── 00-tech-stack-analysis.md
+│   ├── 01-issue-breakdown.md
+│   └── [N]-[feature]-tdd.md
+│
 ├── .github/
-│   └── workflows/           # CI/CD pipelines
-├── .claude/                 # Agent configurations
+│   └── workflows/           # CI/CD
+│       ├── backend-tests.yml
+│       └── frontend-tests.yml
+│
+├── .claude/                 # Agent configs
 │   └── agents/
 │       ├── tdd-planner.md
 │       └── issue-creator.md
-├── content/
-│   └── posts/              # Markdown blog posts
-│       └── YYYY-MM-DD-slug.mdx
-├── docs/                   # TDD plans and documentation
-│   └── [N]-[feature]-tdd.md
-├── public/
-│   ├── images/             # Static images
-│   └── fonts/              # Custom fonts
-├── src/
-│   ├── app/                # Next.js App Router
-│   │   ├── blog/
-│   │   │   └── [slug]/
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   ├── components/         # React components
-│   │   ├── BlogPost.tsx
-│   │   ├── CodeBlock.tsx
-│   │   └── SEO.tsx
-│   ├── lib/                # Utilities
-│   │   ├── markdown.ts
-│   │   ├── seo.ts
-│   │   └── posts.ts
-│   └── types/              # TypeScript types
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── e2e/
-├── .eslintrc.json
-├── next.config.js
-├── package.json
-├── tailwind.config.ts
-├── tsconfig.json
-└── vitest.config.ts
+│
+└── README.md
 ```
 
-## Implementation Phases
+## Deployment Strategy
 
-### Phase 1: Foundation (Issues #1-#5)
-- Project setup with Next.js + TypeScript
-- Basic routing structure
-- Markdown rendering pipeline
-- Testing infrastructure setup
+### Development Environment
+```bash
+# Backend
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements-dev.txt
+uvicorn app.main:app --reload --port 8777
 
-### Phase 2: Core Features (Issues #6-#12)
-- Article listing with pagination
-- Individual article pages
-- Syntax highlighting
-- Responsive design
-- Basic SEO implementation
+# Frontend
+cd frontend
+npm install
+npm run dev -- --port 3777
+```
 
-### Phase 3: Essential Features (Issues #13-#18)
-- Tag/category system
-- Search functionality
-- Dark mode
-- RSS feed
-- Social sharing
+### Production Deployment Options
 
-### Phase 4: Polish & Enhancement (Issues #19-#24)
-- Performance optimization
-- Advanced SEO
-- Analytics integration
-- Comments system
-- Newsletter integration
+**Backend:**
+- **Docker + Docker Compose** (recommended)
+- **Railway** or **Render** (simple deployment)
+- **AWS ECS** or **Google Cloud Run** (scalable)
+
+**Frontend:**
+- **Vercel** or **Netlify** (static hosting with CDN)
+- **Cloudflare Pages**
+- **AWS S3 + CloudFront**
+
+**Database:**
+- **Render PostgreSQL** or **Railway PostgreSQL** (managed)
+- **AWS RDS** or **Google Cloud SQL** (enterprise)
+- **Supabase** (PostgreSQL + storage)
+
+## Success Metrics
+
+### Performance Targets
+- **Backend API:** Response time < 200ms (p95)
+- **Frontend:** First Contentful Paint < 1.5s
+- **Frontend:** Time to Interactive < 3s
+- **File Upload:** Support up to 100MB files
+- **Database Queries:** < 50ms average
+
+### Code Quality Targets
+- **Test Coverage:** > 80% (backend and frontend)
+- **Type Safety:** 100% TypeScript strict mode
+- **Linting:** Zero ESLint/Pylint errors
+- **Security:** Zero critical vulnerabilities (Snyk scan)
+
+### Scalability Targets
+- Support 10,000 articles
+- Support 100,000 media files
+- Handle 1,000 concurrent users
+- 99.9% uptime SLA
 
 ## References
 
-### Documentation
-- [Next.js Documentation](https://nextjs.org/docs)
-- [MDX Documentation](https://mdxjs.com/)
-- [Vitest Documentation](https://vitest.dev/)
-- [Playwright Documentation](https://playwright.dev/)
+### Backend Resources
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [FastAPI File Upload Best Practices](https://betterstack.com/community/guides/scaling-python/uploading-files-using-fastapi/)
+- [SQLAlchemy 2.0 Documentation](https://docs.sqlalchemy.org/en/20/)
+- [Pydantic V2 Documentation](https://docs.pydantic.dev/latest/)
+- [nh3 HTML Sanitization](https://github.com/messense/nh3-python)
 
-### Best Practices
-- [Web.dev - Core Web Vitals](https://web.dev/vitals/)
-- [Google Search Central - SEO](https://developers.google.com/search)
-- [OWASP - XSS Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
+### Frontend Resources
+- [React Documentation](https://react.dev/)
+- [Vite Documentation](https://vitejs.dev/)
+- [React Router Documentation](https://reactrouter.com/)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [react-markdown Documentation](https://github.com/remarkjs/react-markdown)
+- [React Testing Library](https://testing-library.com/react)
 
-### Security
-- [react-markdown Security](https://github.com/remarkjs/react-markdown#security)
-- [DOMPurify](https://github.com/cure53/DOMPurify)
+### Security Resources
+- [OWASP File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html)
+- [OWASP XSS Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 - [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 
 ### Testing Resources
-- [Next.js Testing Guide](https://nextjs.org/docs/app/building-your-application/testing)
-- [Vitest vs Jest Comparison](https://vitest.dev/guide/comparisons.html)
-- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
+- [pytest Documentation](https://docs.pytest.org/)
+- [Vitest Documentation](https://vitest.dev/)
+- [Playwright Documentation](https://playwright.dev/)
+- [MSW (Mock Service Worker)](https://mswjs.io/)

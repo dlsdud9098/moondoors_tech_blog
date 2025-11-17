@@ -29,10 +29,10 @@ Set up PostgreSQL database connection using SQLAlchemy 2.0 with async support (a
 - [x] **MARK**: Update progress
 
 ### Step 4: Test Session Dependency Injection
-- [ ] **RED**: Write test for FastAPI session dependency
-- [ ] **GREEN**: Implement get_db dependency
-- [ ] **REFACTOR**: Add proper cleanup and error handling
-- [ ] **MARK**: Update progress
+- [x] **RED**: Write test for FastAPI session dependency
+- [x] **GREEN**: Implement get_db dependency
+- [x] **REFACTOR**: Add proper cleanup and error handling
+- [x] **MARK**: Update progress
 
 ### Step 5: Test Database Initialization
 - [ ] **RED**: Write test for database initialization utility

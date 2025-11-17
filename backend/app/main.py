@@ -24,3 +24,16 @@ app.add_middleware(
 async def root() -> dict[str, str]:
     """Root endpoint."""
     return {"message": "Moondoors Tech Blog API"}
+
+
+@app.get("/health")
+async def health() -> dict[str, str]:
+    """Health check endpoint.
+
+    Returns:
+        dict: Health status and version information
+    """
+    return {
+        "status": "healthy",
+        "version": app.version,
+    }

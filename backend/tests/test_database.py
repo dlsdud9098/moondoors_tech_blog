@@ -208,3 +208,48 @@ class TestDatabaseInitialization:
 
         # Close
         await close_db()
+
+
+class TestDatabaseSeparation:
+    """Test database separation between development and test environments."""
+
+    def test_different_database_urls(self):
+        """Test that dev and test databases have different URLs."""
+        from app.config import get_settings
+
+        settings = get_settings()
+
+        # URLs should be different
+        assert settings.database_url != settings.test_database_url
+
+        # Test database should be identifiable
+        assert "_test" in settings.test_database_url or "test_" in settings.test_database_url
+
+    @pytest.mark.asyncio
+    async def test_test_database_isolation(self):
+        """Test that test database is isolated from development database."""
+        import os
+        from app.database import get_engine
+
+        # Temporarily override database URL for testing
+        original_url = os.environ.get("DATABASE_URL")
+
+        try:
+            # Set test database URL
+            from app.config import get_settings
+
+            settings = get_settings()
+            test_url = settings.test_database_url
+
+            # Verify it's different
+            assert test_url != settings.database_url
+
+            # Clean up any existing engine
+            from app.database import close_db
+
+            await close_db()
+
+        finally:
+            # Restore original URL if it existed
+            if original_url:
+                os.environ["DATABASE_URL"] = original_url

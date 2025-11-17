@@ -11,10 +11,10 @@ Set up PostgreSQL database connection using SQLAlchemy 2.0 with async support (a
 ## TDD Steps
 
 ### Step 1: Test Database Connection Configuration
-- [ ] **RED**: Write test for database URL configuration
-- [ ] **GREEN**: Implement database URL in config
-- [ ] **REFACTOR**: Extract configuration logic
-- [ ] **MARK**: Update progress
+- [x] **RED**: Write test for database URL configuration
+- [x] **GREEN**: Implement database URL in config
+- [x] **REFACTOR**: Extract configuration logic
+- [x] **MARK**: Update progress
 
 ### Step 2: Test Async Engine Creation
 - [ ] **RED**: Write test for SQLAlchemy async engine creation

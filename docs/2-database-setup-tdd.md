@@ -35,10 +35,10 @@ Set up PostgreSQL database connection using SQLAlchemy 2.0 with async support (a
 - [x] **MARK**: Update progress
 
 ### Step 5: Test Database Initialization
-- [ ] **RED**: Write test for database initialization utility
-- [ ] **GREEN**: Create init_db() and close_db() functions
-- [ ] **REFACTOR**: Add startup/shutdown event handlers
-- [ ] **MARK**: Update progress
+- [x] **RED**: Write test for database initialization utility
+- [x] **GREEN**: Create init_db() and close_db() functions
+- [x] **REFACTOR**: Add startup/shutdown event handlers
+- [x] **MARK**: Update progress
 
 ### Step 6: Test Database Separation (Dev vs Test)
 - [ ] **RED**: Write test for test database isolation

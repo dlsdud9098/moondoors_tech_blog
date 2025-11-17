@@ -33,7 +33,7 @@ Initialize FastAPI project with testing infrastructure following TDD methodology
 - [x] Step 14: Configure ruff linter (RED: test ruff check passes)
 
 ### Phase 6: Documentation
-- [ ] Step 15: Create README.md with setup instructions (RED: test README exists)
+- [x] Step 15: Create README.md with setup instructions (RED: test README exists)
 - [ ] Step 16: Add .env.example template (RED: test .env.example has required vars)
 
 ## Success Criteria

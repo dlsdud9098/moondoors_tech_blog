@@ -29,7 +29,8 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["*"]
 
     # Database
-    database_url: str = "postgresql+asyncpg://user:password@localhost/dbname"
+    database_url: str = "postgresql+asyncpg://bloguser:blogpassword@localhost:5432/techblog"
+    test_database_url: str = "postgresql+asyncpg://bloguser:blogpassword@localhost:5432/techblog_test"
 
     # Security
     secret_key: str = "change-this-in-production"

@@ -47,10 +47,10 @@ Set up PostgreSQL database connection using SQLAlchemy 2.0 with async support (a
 - [x] **MARK**: Update progress
 
 ### Step 7: Alembic Migration Setup
-- [ ] **RED**: Write test for alembic configuration
-- [ ] **GREEN**: Initialize alembic with async template
-- [ ] **REFACTOR**: Configure env.py for async migrations
-- [ ] **MARK**: Update progress
+- [x] **RED**: Write test for alembic configuration
+- [x] **GREEN**: Initialize alembic with async template
+- [x] **REFACTOR**: Configure env.py for async migrations
+- [x] **MARK**: Update progress
 
 ### Step 8: Test Migration Execution
 - [ ] **RED**: Write test for migration execution

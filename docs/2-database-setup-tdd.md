@@ -23,10 +23,10 @@ Set up PostgreSQL database connection using SQLAlchemy 2.0 with async support (a
 - [x] **MARK**: Update progress
 
 ### Step 3: Test Database Session Management
-- [ ] **RED**: Write test for async session creation
-- [ ] **GREEN**: Implement async_sessionmaker
-- [ ] **REFACTOR**: Add session lifecycle management
-- [ ] **MARK**: Update progress
+- [x] **RED**: Write test for async session creation
+- [x] **GREEN**: Implement async_sessionmaker
+- [x] **REFACTOR**: Add session lifecycle management
+- [x] **MARK**: Update progress
 
 ### Step 4: Test Session Dependency Injection
 - [ ] **RED**: Write test for FastAPI session dependency

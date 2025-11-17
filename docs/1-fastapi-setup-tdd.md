@@ -34,7 +34,7 @@ Initialize FastAPI project with testing infrastructure following TDD methodology
 
 ### Phase 6: Documentation
 - [x] Step 15: Create README.md with setup instructions (RED: test README exists)
-- [ ] Step 16: Add .env.example template (RED: test .env.example has required vars)
+- [x] Step 16: Add .env.example template (RED: test .env.example has required vars)
 
 ## Success Criteria
 - All tests passing (pytest)
